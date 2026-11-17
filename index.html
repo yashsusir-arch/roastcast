@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0A0A0D">
+  <meta name="description" content="Offline roast profile simulator for green coffee, with Kaffelogic export.">
+  <title>RoastCast</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <!-- Jost = free Futura-style fallback; cached by the service worker for offline use -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@500;700;800&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="#input" aria-label="RoastCast home">
+      <span class="logo" aria-hidden="true"></span>
+      <span>ROAST<b>CAST</b></span>
+    </a>
+    <span id="net" class="net" title="Connection status">OFFLINE READY</span>
+  </header>
+
+  <main>
+    <!-- ======================= INPUT PAGE ======================= -->
+    <section id="view-input" class="view">
+      <h1 class="page-title">Green bean <span class="hl-y">in</span>.<br>Roast profile <span class="hl-g">out</span>.</h1>
+
+      <form id="bean-form" novalidate autocomplete="off">
+        <fieldset class="card c-blue">
+          <legend>01 · Batch</legend>
+          <label class="field span2">
+            <span class="lbl">Lot name</span>
+            <input id="name" name="name" type="text" maxlength="40" placeholder="e.g. Kenya Nyeri AA">
+          </label>
+          <label class="field">
+            <span class="lbl">Batch size <em>g</em></span>
+            <input id="batch" name="batch" type="number" inputmode="decimal" min="50" max="200" step="1" value="120" required>
+            <small class="hint">Nano 7 default 120 g</small>
+          </label>
+          <label class="field">
+            <span class="lbl">Target roast</span>
+            <select id="level" name="level" required></select>
+          </label>
+        </fieldset>
+
+        <fieldset class="card c-yellow">
+          <legend>02 · Green coffee</legend>
+          <label class="field">
+            <span class="lbl">Density <em>g/L</em></span>
+            <input id="density" name="density" type="number" inputmode="decimal" min="0.5" max="900" step="any" placeholder="700" required>
+            <small class="hint">Free-flow bulk. &lt;650 soft · 700 avg · 750+ hard</small>
+          </label>
+          <label class="field">
+            <span class="lbl">Moisture <em>%</em></span>
+            <input id="moisture" name="moisture" type="number" inputmode="decimal" min="5" max="16" step="0.1" placeholder="10.5" required>
+            <small class="hint">SCA range 8–12.5 %</small>
+          </label>
+          <label class="field">
+            <span class="lbl">Origin</span>
+            <select id="origin" name="origin" required></select>
+          </label>
+          <label class="field">
+            <span class="lbl">Elevation <em>masl</em></span>
+            <input id="elevation" name="elevation" type="number" inputmode="numeric" min="0" max="3000" step="10" placeholder="1600" required>
+            <small class="hint" id="elev-hint">Use the farm's average</small>
+          </label>
+          <label class="field">
+            <span class="lbl">Harvest year</span>
+            <input id="harvestYear" name="harvestYear" type="number" inputmode="numeric" min="2010" step="1" required>
+          </label>
+          <label class="field">
+            <span class="lbl">Process</span>
+            <select id="process" name="process" required></select>
+          </label>
+          <label class="field">
+            <span class="lbl">Screen size <em>optional</em></span>
+            <select id="screen" name="screen">
+              <option value="">Unknown</option>
+              <option value="13">13–14 (small / peaberry)</option>
+              <option value="15">15–16</option>
+              <option value="17">17–18 (AA)</option>
+              <option value="19">19+ (very large)</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="lbl">Variety <em>optional</em></span>
+            <input id="variety" name="variety" type="text" maxlength="40" placeholder="e.g. SL28, Gesha">
+          </label>
+        </fieldset>
+
+        <fieldset class="card c-green">
+          <legend>03 · Room</legend>
+          <label class="field">
+            <span class="lbl">Ambient temp <em>°C</em></span>
+            <input id="ambient" name="ambient" type="number" inputmode="decimal" min="0" max="45" step="0.5" value="22">
+            <small class="hint">Cold rooms slow the drying phase</small>
+          </label>
+        </fieldset>
+
+        <p id="form-error" class="form-error" role="alert" hidden></p>
+
+        <div class="actions">
+          <button type="submit" class="btn primary">Simulate roast ▸</button>
+          <button type="button" id="save-batch" class="btn ghost">Save batch</button>
+        </div>
+      </form>
+
+      <section class="card c-blue saved" aria-labelledby="saved-h">
+        <h2 id="saved-h">Saved batches</h2>
+        <ul id="saved-list" class="saved-list"></ul>
+      </section>
+    </section>
+
+    <!-- ======================= RESULTS PAGE ======================= -->
+    <section id="view-results" class="view" hidden>
+      <div class="res-head">
+        <button type="button" class="btn ghost small" id="back">◂ Edit beans</button>
+        <h1 class="page-title small" id="res-title">Roast profile</h1>
+        <p class="sub" id="res-sub"></p>
+      </div>
+
+      <div class="stats" id="stats"></div>
+
+      <section class="card c-yellow">
+        <h2>Profile curve</h2>
+        <div class="legend">
+          <span><i class="sw sw-y"></i>Bean temp °C</span>
+          <span><i class="sw sw-b"></i>Rate of rise °C/min</span>
+        </div>
+        <div id="chart" class="chart" role="img" aria-label="Roast profile chart"></div>
+        <div class="phasebar" id="phasebar"></div>
+      </section>
+
+      <section class="card c-green">
+        <h2>Milestones</h2>
+        <div class="table-wrap"><table class="tbl" id="milestones"></table></div>
+        <h2 class="mt">Phase targets</h2>
+        <div class="table-wrap"><table class="tbl" id="phases"></table></div>
+      </section>
+
+      <section class="card c-blue" id="flags-card">
+        <h2>Notes &amp; flags</h2>
+        <ul class="flags" id="flags"></ul>
+      </section>
+
+      <section class="card c-yellow">
+        <h2>Export to Kaffelogic</h2>
+        <p class="muted">For the safest file, load one of your own profiles from Kaffelogic Studio as a base. The app keeps its fan, zone and level settings and swaps in the new roast curve and expected colour change / first crack.</p>
+        <label class="field">
+          <span class="lbl">Base profile <em>optional .kpro</em></span>
+          <input id="base-file" type="file" accept=".kpro,.txt,text/plain">
+          <small class="hint" id="base-info">No base loaded — a minimal profile will be generated.</small>
+        </label>
+        <label class="field">
+          <span class="lbl">Curve encoding</span>
+          <select id="layout"></select>
+        </label>
+        <div class="actions wrap">
+          <button type="button" class="btn primary" id="dl-kpro">Download .kpro</button>
+          <button type="button" class="btn ghost" id="dl-csv">Download CSV</button>
+          <button type="button" class="btn ghost" id="dl-json">Download JSON</button>
+          <button type="button" class="btn ghost" id="share" hidden>Share</button>
+        </div>
+        <details class="preview">
+          <summary>Preview .kpro text</summary>
+          <pre id="kpro-preview"></pre>
+        </details>
+      </section>
+
+      <p class="disclaimer">RoastCast is a rules-of-thumb model, not a physics simulation. Use it as a starting profile, then adjust using your own roast logs and cupping.</p>
+    </section>
+  </main>
+
+  <script src="model.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

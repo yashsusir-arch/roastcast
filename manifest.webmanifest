@@ -1,0 +1,16 @@
+{
+  "name": "RoastCast — Roast Profile Simulator",
+  "short_name": "RoastCast",
+  "description": "Offline coffee roast profile simulator with Kaffelogic export.",
+  "start_url": "./#input",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A0A0D",
+  "theme_color": "#0A0A0D",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

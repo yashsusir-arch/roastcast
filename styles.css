@@ -1,0 +1,200 @@
+/* Futura Bold if the device has it (or if you add a licensed file at fonts/Futura-Bold.woff2),
+   otherwise Jost — a free Futura-style geometric typeface. */
+@font-face {
+  font-family: "FuturaBoldLocal";
+  src: local("Futura Bold"), local("Futura-Bold"), local("FuturaPT-Bold"), local("Futura PT Bold"),
+       url("fonts/Futura-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  --bg: #0A0A0D;
+  --panel: #14151C;
+  --panel-2: #1C1E28;
+  --line: #2B2E3D;
+  --text: #F5F7FB;
+  --muted: #A3AABB;
+  --blue: #2F7BFF;
+  --blue-soft: rgba(47, 123, 255, .16);
+  --yellow: #FFD60A;
+  --yellow-soft: rgba(255, 214, 10, .14);
+  --green: #1FD67A;
+  --green-soft: rgba(31, 214, 122, .14);
+  --red: #FF5C61;
+  --font: "FuturaBoldLocal", "Futura", "Futura PT", "Jost", "Century Gothic", system-ui, sans-serif;
+  --r: 18px;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  background-image:
+    radial-gradient(1200px 500px at 110% -10%, rgba(47,123,255,.22), transparent 60%),
+    radial-gradient(900px 500px at -20% 30%, rgba(31,214,122,.12), transparent 60%);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: var(--font);
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: .01em;
+  min-height: 100vh;
+}
+button, input, select { font: inherit; color: inherit; }
+
+/* ---------- header ---------- */
+.top {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
+  background: rgba(10,10,13,.86);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--yellow);
+}
+.brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-size: 20px; letter-spacing: .08em; }
+.brand b { color: var(--yellow); font-weight: 800; }
+.logo {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: conic-gradient(var(--blue) 0 33%, var(--yellow) 0 66%, var(--green) 0);
+  position: relative;
+}
+.logo::after { content: ""; position: absolute; inset: 7px 13px; background: var(--bg); border-radius: 50%; transform: rotate(20deg); }
+.net { font-size: 11px; letter-spacing: .12em; padding: 5px 9px; border-radius: 99px; background: var(--green-soft); color: var(--green); }
+.net.off { background: var(--yellow-soft); color: var(--yellow); }
+
+main { max-width: 960px; margin: 0 auto; padding: 16px 16px calc(40px + env(safe-area-inset-bottom)); }
+
+.page-title { font-size: clamp(30px, 8vw, 52px); line-height: 1.02; margin: 12px 0 20px; text-transform: uppercase; letter-spacing: .01em; font-weight: 800; }
+.page-title.small { font-size: clamp(26px, 6vw, 40px); margin: 10px 0 4px; }
+.hl-y { color: var(--yellow); }
+.hl-g { color: var(--green); }
+.sub { color: var(--muted); margin: 0 0 18px; font-weight: 500; }
+.muted { color: var(--muted); font-weight: 500; }
+
+/* ---------- cards ---------- */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--blue);
+  border-radius: var(--r);
+  padding: 18px 16px;
+  margin: 0 0 16px;
+  min-width: 0;
+}
+.c-yellow { border-top-color: var(--yellow); }
+.c-green { border-top-color: var(--green); }
+fieldset.card { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 14px; }
+legend {
+  float: left; width: 100%; grid-column: 1 / -1;
+  font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); padding: 0; margin-bottom: 2px;
+}
+.card h2 { font-size: 15px; letter-spacing: .14em; text-transform: uppercase; margin: 0 0 12px; }
+.card h2.mt { margin-top: 20px; }
+
+/* ---------- fields ---------- */
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field.span2 { grid-column: 1 / -1; }
+.lbl { font-size: 14px; }
+.lbl em { font-style: normal; color: var(--muted); font-weight: 500; font-size: 12px; margin-left: 4px; }
+input, select {
+  width: 100%; min-height: 50px;
+  background: var(--panel-2);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 17px;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+input[type=file] { min-height: 0; padding: 10px; font-size: 14px; }
+select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--yellow) 50%), linear-gradient(135deg, var(--yellow) 50%, transparent 50%); background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%; background-size: 6px 6px; background-repeat: no-repeat; padding-right: 34px; }
+input:focus, select:focus { border-color: var(--blue); box-shadow: 0 0 0 4px var(--blue-soft); }
+input::placeholder { color: #5E6475; }
+.field.invalid input, .field.invalid select { border-color: var(--red); }
+.hint { color: var(--muted); font-size: 12px; font-weight: 500; }
+.form-error { color: var(--red); margin: 0 0 12px; }
+
+/* ---------- buttons ---------- */
+.actions { display: flex; gap: 10px; margin: 4px 0 18px; }
+.actions.wrap { flex-wrap: wrap; margin-top: 14px; }
+.btn {
+  border: 0; border-radius: 14px; padding: 14px 20px; min-height: 52px;
+  font-size: 16px; letter-spacing: .06em; text-transform: uppercase; cursor: pointer;
+  transition: transform .08s, filter .15s;
+}
+.btn:active { transform: scale(.97); }
+.btn.primary { background: var(--yellow); color: #0A0A0D; flex: 1; box-shadow: 0 6px 0 #B89600; }
+.btn.primary:active { box-shadow: 0 2px 0 #B89600; transform: translateY(4px); }
+.btn.ghost { background: transparent; border: 2px solid var(--blue); color: var(--text); }
+.btn.ghost:hover { background: var(--blue-soft); }
+.btn.small { min-height: 40px; padding: 8px 14px; font-size: 13px; }
+.actions.wrap .btn { flex: 1 1 140px; }
+
+/* ---------- saved list ---------- */
+.saved-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.saved-list li { display: flex; align-items: center; gap: 8px; background: var(--panel-2); border-radius: 12px; padding: 10px 12px; }
+.saved-list .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.saved-list .nm small { display: block; color: var(--muted); font-weight: 500; font-size: 12px; }
+.saved-list button { background: none; border: 2px solid var(--line); border-radius: 10px; padding: 6px 10px; cursor: pointer; font-size: 13px; }
+.saved-list button.load { border-color: var(--green); color: var(--green); }
+.saved-list .empty { color: var(--muted); font-weight: 500; background: none; padding: 0; }
+
+/* ---------- results ---------- */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px; min-width: 0; }
+.stat .k { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.stat .v { font-size: 28px; font-weight: 800; line-height: 1.1; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.stat .s { font-size: 13px; color: var(--muted); font-weight: 500; margin-top: 2px; }
+.stat.y { background: var(--yellow); color: #0A0A0D; border-color: var(--yellow); }
+.stat.y .k, .stat.y .s { color: rgba(10,10,13,.7); }
+.stat.b { background: var(--blue); border-color: var(--blue); }
+.stat.b .k, .stat.b .s { color: rgba(255,255,255,.8); }
+.stat.g { background: var(--green); color: #0A0A0D; border-color: var(--green); }
+.stat.g .k, .stat.g .s { color: rgba(10,10,13,.7); }
+
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.sw { display: inline-block; width: 16px; height: 4px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+.sw-y { background: var(--yellow); } .sw-b { background: var(--blue); }
+.chart svg { display: block; width: 100%; height: auto; }
+.chart text { font-family: var(--font); }
+
+.phasebar { display: flex; height: 38px; border-radius: 10px; overflow: hidden; margin-top: 12px; font-size: 12px; }
+.phasebar div { display: flex; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden; color: #0A0A0D; padding: 0 4px; }
+.phasebar .dry { background: var(--green); }
+.phasebar .mail { background: var(--yellow); }
+.phasebar .dev { background: var(--blue); color: #fff; }
+
+.table-wrap { overflow-x: auto; }
+.tbl { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.tbl th, .tbl td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.tbl th { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); vertical-align: bottom; }
+.tbl th small { display: block; text-transform: none; letter-spacing: 0; font-weight: 500; }
+.tbl td:first-child { white-space: normal; }
+.tbl td:not(:first-child), .tbl th:not(:first-child) { text-align: right; }
+@media (max-width: 480px) {
+  .tbl th, .tbl td { padding: 9px 5px; font-size: 14px; }
+  .tbl th { font-size: 10px; letter-spacing: .06em; }
+  .dot { margin-right: 5px; }
+}
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
+
+.flags { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.flags li { padding: 10px 12px 10px 14px; border-radius: 12px; background: var(--panel-2); border-left: 4px solid var(--blue); font-weight: 500; }
+.flags li.warn { border-left-color: var(--yellow); }
+.flags li b { font-weight: 700; }
+
+.preview { margin-top: 14px; }
+.preview summary { cursor: pointer; color: var(--muted); }
+.preview pre { background: #000; border: 1px solid var(--line); border-radius: 12px; padding: 12px; overflow-x: auto; font-size: 12px; white-space: pre-wrap; word-break: break-all; font-family: ui-monospace, Consolas, monospace; font-weight: 400; }
+
+.disclaimer { color: var(--muted); font-size: 12px; font-weight: 500; text-align: center; }
+
+@media (max-width: 640px) {
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stat .v { font-size: 24px; }
+}
+@media (max-width: 380px) {
+  fieldset.card { grid-template-columns: 1fr; }
+}
